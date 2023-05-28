@@ -6,3 +6,5 @@ This script executes a full backup & restore of Medtech32 Application databases 
 Documentation referenced below for testing the script. Any comments appreciated as well as improvements
 https://docwiki.embarcadero.com/InterBase/2020/en/Performing_backups_and_restores_using_the_gbak_command
 https://www.ibexpert.net/ibe/pmwiki.php?n=Doc.FirebirdAndInterBaseCommandLineUtilities
+
+The code can be saved & used as a batch file or powershell script
