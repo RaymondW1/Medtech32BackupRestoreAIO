@@ -1,0 +1,64 @@
+###### SET YOUR DATABASES FOR LOGGING###
+SET DATABASE_MT32=D:\MT_Backup\MT32.IB
+SET DATABASE_BLOB=D:\MT_Backup\BLOB.IB
+
+#####STOP YOUR AUXILIARY SERVICES####
+NET STOP Tomcat9
+NET STOP "Capricorn"
+NET STOP CnprtGuardian
+NET STOP DRINFO
+NET STOP MedtechGP2GP
+NET STOP "HealthLink Messaging System"
+NET STOP "HealthLink Quantum"
+NET STOP "Health Intelligence Messenger"
+NET STOP IBS_Medtech_IBXE7
+NET STOP MedtechSS
+NET STOP Schedule
+NET STOP "TXT2Remind Service"
+NET STOP Vensa.Integration.Service
+NET STOP Netlogon
+REM Pause
+
+Echo Stop Taksbar Programs
+taskkill /IM bestpracticeextractor.exe /F
+TSKILL DirectoryMonitor
+TSKILL schedule
+TSKILL MTDirectoryMonitor
+
+NET START IBG_Medtech_IBXE7
+
+TIMEOUT /T 60
+
+#############SET YOUR DATABASE LOCATION FOR SOURCE & FOR BACKUP DRIVE LOCATION###############
+"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -b -g -ig -v -user SYSDBA -password masterkey -se service_mgr "D:\MT32\DATA\MT32.IB" "X:\MT_Backup\MT32.IBK" 2> %LOGLOCATION%%DATETIME%.gbak-backup.MT32.log
+
+"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -b -g -ig -v -user SYSDBA -password masterkey -se service_mgr "D:\MT32\DATA\BLOB.IB" "X:\MT_Backup\BLOB.IBK" %LOGLOCATION%%DATETIME%.gbak-backup.BLOB.log
+
+ECHO Stop IB before moving Databases
+NET STOP IBS_Medtech_IBXE7
+
+ECHO Move Original Databases before restore
+Move /Y D:\MT32\DATA\MT32.IB X:\MT_Backup\
+Move /Y D:\MT32\DATA\BLOB.IB X:\MT_Backup\
+
+ECHO Start IB Before Restores
+NET START IBG_Medtech_IBXE7
+
+TIMEOUT /T 60
+
+#########SET RESTORE DATABSE NAMES FOR LOGGING################
+SET RESTORED_DATABASE_MT32=D:\MT32\DATA\MT32.Restored.IB
+SET RESTORED_DATABASE_BLOB=D:\MT32\DATA\BLOB.Restored.IB
+
+SET BACKUPFILE_MT32=X:\MT32_Backup\MT32.IBK
+SET BACKUPFILE_BLOB=X:\MT32_Backup\BLOB.IBK
+
+IF "%time:~0,1%" LSS "1" (
+   SET DATETIME=%date:~10,4%-%date:~7,2%-%date:~4,2%-0%time:~1,1%-%time:~3,2%-%time:~6,2%
+) ELSE (
+   SET DATETIME=%date:~10,4%-%date:~7,2%-%date:~4,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+)
+##########SET DATABASE BACKUP DRIVE & RESTORE LOCATION######
+"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -c -v -user SYSDBA -password masterkey -se service_mgr  "X:\MT_Backup\MT32.IBK" "D:\MT32\DATA\MT32.Restored.IB" 2> %LOGLOCATION%%DATETIME%.gbak-restore.MT32.log
+
+"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -c -v -user SYSDBA -password masterkey -se service_mgr  "X:\MT_Backup\BLOB.IBK" "D:\MT32\DATA\BLOB.Restored.IB" 2> %LOGLOCATION%%DATETIME%.gbak-restore.BLOB.log
