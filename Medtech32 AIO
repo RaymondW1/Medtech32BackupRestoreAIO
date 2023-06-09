@@ -32,7 +32,7 @@ TIMEOUT /T 60
 #############SET YOUR DATABASE LOCATION FOR SOURCE & FOR BACKUP DRIVE LOCATION###############
 "C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -b -g -ig -v -user SYSDBA -password masterkey -se service_mgr "D:\MT32\DATA\MT32.IB" "X:\MT_Backup\MT32.IBK" 2> %LOGLOCATION%%DATETIME%.gbak-backup.MT32.log
 
-"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -b -g -ig -v -user SYSDBA -password masterkey -se service_mgr "D:\MT32\DATA\BLOB.IB" "X:\MT_Backup\BLOB.IBK" %LOGLOCATION%%DATETIME%.gbak-backup.BLOB.log
+"C:\Program Files\Embarcadero\InterBase\bin\gbak.exe" -b -g -ig -v -user SYSDBA -password masterkey -se service_mgr "D:\MT32\DATA\BLOB.IB" "X:\MT_Backup\BLOB.IBK" 2> %LOGLOCATION%%DATETIME%.gbak-backup.BLOB.log
 
 ECHO Stop IB before moving Databases
 NET STOP IBS_Medtech_IBXE7
